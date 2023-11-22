@@ -86,74 +86,58 @@ function sendDataToEndpoint(barcode) {
   // Assuming barcode is part of the URL path and not a query string
   var endpoint = `https://web.purplestock.com.br/api/v1/account/1/checkout_orders/${barcode}`;
   // var endpoint = `http://localhost:3000/api/v1/account/1/checkout_orders/${barcode}`;
-
-  console.log(endpoint)
   
   // Making a GET request without a body
   fetch(endpoint)
   .then(response => {
-      // Check if the response is ok (status code 200-299)
       if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
+          if (response.status === 404) {
+              // Handle not found case without throwing an error
+              return { message: "Order not found" };
+          }
+          throw new Error('Network response was not ok: ' + response.statusText);
       }
       return response.json();
   })
-  .then(data => {
-      console.log('Success:', data);
-      // Here you would typically show your modal with the returned data.
-      showModal(data);
+  .then(jsonResponse => {
+      showModal(jsonResponse);
   })
-  .catch((error) => {
+  .catch(error => {
       console.error('Error:', error);
+      showModal({ message: "An error occurred" });
   });
+
+
 }
 
 function showModal(data) {
-  // Create your modal here using the data returned from the endpoint
-  alert(JSON.stringify(data, null, 2));
-}
+  var modalBody = document.getElementById('modalBody');
+  modalBody.innerHTML = ''; // Clear previous content
 
-// Existing functions omitted for brevity
+  // Check if the data contains a message (for error or 'not found' scenarios)
+  if (data.message) {
+      var messageParagraph = document.createElement('p');
+      messageParagraph.textContent = data.message;
+      modalBody.appendChild(messageParagraph);
+  } else {
+      // Function to add property to the modal
+      function addProperty(name, value) {
+          var propertyParagraph = document.createElement('p');
+          propertyParagraph.innerHTML = `<strong>${name}:</strong> ${value}`;
+          modalBody.appendChild(propertyParagraph);
+      }
 
-function showModal(response) {
-  var data = response.data; // Access the nested 'data' object
-  var cardContainer = document.getElementById('card-container');
-  cardContainer.innerHTML = ''; // Clear previous cards
-
-  var card = document.createElement('div');
-  card.className = 'card';
-
-  var cardBody = document.createElement('div');
-  cardBody.className = 'card-body';
-
-  var storeName = document.createElement('h5');
-  storeName.className = 'card-title';
-  storeName.textContent = data.store_name;
-  cardBody.appendChild(storeName);
-
-  function addProperty(name, value) {
-      var property = document.createElement('h6');
-      property.className = 'card-subtitle mb-2 text-muted';
-      property.textContent = name;
-
-      var valueElement = document.createElement('p');
-      valueElement.className = 'card-text';
-      valueElement.textContent = value;
-
-      cardBody.appendChild(property);
-      cardBody.appendChild(valueElement);
+      // Add properties from the data object
+      addProperty('Bling ID', data.data.bling_id);
+      addProperty('Bling Order ID', data.data.bling_order_id);
+      addProperty('Merchant Package', data.data.merchant_package);
+      addProperty('Order Number', data.data.order_number);
+      addProperty('SHEIN Status', data.data.shein_status);
+      addProperty('Bling Status', data.data.bling_status);
+      addProperty('Account ID', data.data.account_id);
   }
 
-  // Add properties
-  addProperty('Bling ID', data.bling_id);
-  addProperty('Bling Order ID', data.bling_order_id);
-  addProperty('Merchant Package', data.merchant_package);
-  addProperty('Order Number', data.order_number);
-  addProperty('SHEIN Status', data.shein_status);
-  addProperty('Bling Status', data.bling_status);
-  addProperty('Account ID', data.account_id);
-
-  card.appendChild(cardBody);
-  cardContainer.appendChild(card);
+  // Show the modal
+  $('#resultModal').modal('show');
 }
 
