@@ -40,13 +40,20 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   Quagga.onDetected(function (result) {
-      var code = result.codeResult.code;
-      // Stop Quagga scanner
-      Quagga.stop();
-      
-      // Send the barcode to your endpoint
-      sendDataToEndpoint(code);
+    var code = result.codeResult.code;
+    // Stop Quagga scanner
+    Quagga.stop();
+    
+    // Trigger a vibration
+    if (navigator.vibrate) {
+        // Vibration for 200 milliseconds
+        navigator.vibrate(200);
+    }
+
+    // Send the barcode to your endpoint
+    sendDataToEndpoint(code);
   });
+
 });
 
 // Scanner initialization omitted for brevity - it's the same as before
