@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH1gKFvE8rq+PnFHr5Y2pO9H9Z9dW3oy9sP0NbxN" crossorigin="anonymous">
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+
+        #interactive.viewport {
+            width: 100%;
+            border: 1px solid #ccc;
+            height: auto;
+            max-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #barcode-input {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <h1 class="text-center mb-4">Barcode Scanner</h1>
+        <div id="interactive" class="viewport"></div>
+        <input type="file" id="barcode-input" class="form-control-file" accept="image/*" />
+        <div id="card-container" class="mt-3"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
